@@ -1,13 +1,14 @@
-# matrix-det-parser
+### matrix-det-parser
 
 **matrix-det-parser** - це інструмент командного рядка для обчислення детермінанту матриці з використанням бібліотеки `nalgebra`.
 
-## Встановлення
+### Встановлення 
 
 Додайте наступний рядок до секції `[dependencies]` у вашому файлі `Cargo.toml`:
 
 ```toml
 matrix-det-lib = { version = "0.1.0", path = "C:\\krs\\matrix-det-lib" }
+```
 
 ### Приклад
 
@@ -19,25 +20,31 @@ fn main() {
     let determinant = matrix.determinant();
     println!("Детермінант матриці: {}", determinant);
 }
+```
 
-// Граматичне правило Number
+### Граматичне правило Number
+```
 number: f64 = @{
     ("-")? // Необов'язковий від'ємний знак
     ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*) // Ціле чи десяткове число
     ~ ("." ~ ASCII_DIGIT*)? // Опціональна десяткова частина
 }
-
+```
+```
 #[test]
 fn test_number_parsing() {
     assert_eq!(parse_number("42"), Ok(ast::MatrixExpr::Number(42.0)));
     assert_eq!(parse_number("3.14"), Ok(ast::MatrixExpr::Number(3.14)));
 }
+```
 
-// Граматичне правило UnaryMinus
+### Граматичне правило UnaryMinus
+```
 unary_minus: na::DMatrix<f64> = {
     "-" expr
 }
-
+```
+```
 #[test]
 fn test_unary_minus_parsing() {
     assert_eq!(
@@ -45,12 +52,15 @@ fn test_unary_minus_parsing() {
         Ok(ast::MatrixExpr::UnaryMinus(Box::new(ast::MatrixExpr::Number(42.0))))
     );
 }
+```
 
-// Граматичне правило для Matrix
+### Граматичне правило для Matrix
+```
 matrix: ast::MatrixExpr = {
     "[" (expr (~ "," ~ expr)*)? "]"
 }
-
+```
+```
 #[test]
 fn test_matrix_parsing() {
     assert_eq!(
@@ -61,15 +71,18 @@ fn test_matrix_parsing() {
         ]))
     );
 }
+```
 
-// Граматичне правило BinaryOp
+### Граматичне правило BinaryOp
+```
 binary_op: ast::MatrixExpr = {
     expr "+" expr
     | expr "-" expr
     | expr "*" expr
     | expr "/" expr
 }
-
+```
+```
 #[test]
 fn test_matrix_operations() {
     assert_eq!(
@@ -87,3 +100,4 @@ fn test_matrix_operations() {
         ))
     );
 }
+```
