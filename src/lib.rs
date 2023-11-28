@@ -1,3 +1,8 @@
+extern crate pest_derive;
+extern crate pest;
+#[macro_use]
+pub mod grammar;
+
 extern crate nalgebra as na;
 
 use std::io;

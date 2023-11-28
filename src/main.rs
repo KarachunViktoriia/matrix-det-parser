@@ -1,4 +1,4 @@
-use matrix_det_parser:: read_matrix;
+use matrix_det_parser::read_matrix;
 
 fn print_help() {
     println!("Використання:");

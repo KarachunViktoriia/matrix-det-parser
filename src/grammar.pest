@@ -1,0 +1,11 @@
+WHITESPACE = _{ " " }
+
+integer = @{ ASCII_DIGIT+ }
+number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+
+dimension_line = @{ integer ~ "\n" }
+
+matrix_lines = { matrix_line+ }
+matrix_line = { number+ ~ "\n" }
+
+matrix_input = { "3" ~ "\n" ~ number* }
