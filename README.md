@@ -22,82 +22,42 @@ fn main() {
 }
 ```
 
-### Граматичне правило Number
-```
-number: f64 = @{
-    ("-")? // Необов'язковий від'ємний знак
-    ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*) // Ціле чи десяткове число
-    ~ ("." ~ ASCII_DIGIT*)? // Опціональна десяткова частина
-}
-```
+### matrix_input = { "3" ~ "\n" ~ number* }
 ```
 #[test]
-fn test_number_parsing() {
-    assert_eq!(parse_number("42"), Ok(ast::MatrixExpr::Number(42.0)));
-    assert_eq!(parse_number("3.14"), Ok(ast::MatrixExpr::Number(3.14)));
+fn test_matrix_input() {
+    let input = "3\n1.0 2.0 3.0\n4.0 5.0 6.0\n7.0 8.0 9.0\n";
+    let result = MatrixParser::parse(Rule::matrix_input, input);
+    assert!(result.is_ok());
 }
 ```
 
-### Граматичне правило UnaryMinus
-```
-unary_minus: na::DMatrix<f64> = {
-    "-" expr
-}
-```
+### dimension_line = @{ integer ~ "\n" }
 ```
 #[test]
-fn test_unary_minus_parsing() {
-    assert_eq!(
-        parse_unary_minus("-42"),
-        Ok(ast::MatrixExpr::UnaryMinus(Box::new(ast::MatrixExpr::Number(42.0))))
-    );
+fn test_dimension_line() {
+    let input = "3\n";
+    let result = MatrixParser::parse(Rule::dimension_line, input);
+    assert!(result.is_ok());
 }
 ```
 
-### Граматичне правило для Matrix
-```
-matrix: ast::MatrixExpr = {
-    "[" (expr (~ "," ~ expr)*)? "]"
-}
-```
+### matrix_lines = { matrix_line+ }
 ```
 #[test]
-fn test_matrix_parsing() {
-    assert_eq!(
-        parse_matrix_expr("[[1.0, 2.0], [3.0, 4.0]]"),
-        Ok(ast::MatrixExpr::Matrix(vec![
-            vec![1.0, 2.0],
-            vec![3.0, 4.0]
-        ]))
-    );
+fn test_matrix_lines() {
+    let input = "1.0 2.0 3.0\n4.0 5.0 6.0\n7.0 8.0 9.0\n";
+    let result = MatrixParser::parse(Rule::matrix_lines, input);
+    assert!(result.is_ok());
 }
 ```
 
-### Граматичне правило BinaryOp
-```
-binary_op: ast::MatrixExpr = {
-    expr "+" expr
-    | expr "-" expr
-    | expr "*" expr
-    | expr "/" expr
-}
-```
+### matrix_line = { number+ ~ "\n" }
 ```
 #[test]
-fn test_matrix_operations() {
-    assert_eq!(
-        parse_matrix_expr("[[1.0, 2.0], [3.0, 4.0]] + [[2.0, 1.0], [1.0, 2.0]]"),
-        Ok(ast::MatrixExpr::BinaryOp(
-            Box::new(ast::MatrixExpr::Matrix(vec![
-                vec![1.0, 2.0],
-                vec![3.0, 4.0]
-            ])),
-            ast::MatrixBinOp::Add,
-            Box::new(ast::MatrixExpr::Matrix(vec![
-                vec![2.0, 1.0],
-                vec![1.0, 2.0]
-            ]))
-        ))
-    );
-}
+fn test_matrix_line() {
+    let input = "1.0 2.0 3.0\n";
+    let result = MatrixParser::parse(Rule::matrix_line, input);
+    assert!(result.is_ok());
+} 
 ```
